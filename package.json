@@ -4,7 +4,7 @@
   "description": "Emailer for rum-diary.org",
   "main": "emailer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive test/spec"
   },
   "author": "",
   "license": "MPL 2.0",
