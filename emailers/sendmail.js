@@ -3,6 +3,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const nodemailer = require('nodemailer');
+const transport = require('nodemailer-sendmail-transport');
 
-module.exports = nodemailer.createTransport('sendmail');
+module.exports = function () {
+  return nodemailer.createTransport(transport({
+    path: '/user/sbin/sendmail'
+  }));
+};
 

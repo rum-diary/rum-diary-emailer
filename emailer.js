@@ -20,9 +20,27 @@ function toMailConfig(fromAddress, toAddress, subject, htmlEmail, textEmail) {
 }
 
 
-module.exports = function (logger, config) {
-  var fromAddress = config.get('sending_user') + '@' + config.get('hostname');
-  var mailer = require('./emailers/' + config.get('transport'));
+module.exports = function (config) {
+  if (! config) {
+    throw new Error('missing config');
+  }
+
+  var transport = config.transport;
+  if (! transport) {
+    throw new Error('missing transport');
+  }
+
+  var logger = config.logger;
+  if (! logger) {
+    throw new Error ('missing logger');
+  }
+  var fromAddress = config.fromAddress;
+  if (! fromAddress) {
+    throw new Error ('missing fromAddress');
+  }
+
+  var Mailer = require('./emailers/' + transport);
+  var mailer = new Mailer(logger);
 
   return {
     send: function (toAddress, subject, htmlEmail, textEmail) {

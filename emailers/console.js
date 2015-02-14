@@ -3,36 +3,24 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const nodemailer = require('nodemailer');
-const config = require('../config');
-const logger = require('../logger');
 
 // Pipes all messages to stdout
 
 function ConsoleTransport(options) {
+  options = options || {};
   this.options = options;
+  this._logger = options.logger;
 }
 
-ConsoleTransport.prototype.sendMail = function (emailMessage, callback) {
-  var message = '';
+ConsoleTransport.prototype.send = function (email, callback) {
+  this._logger.verbose(JSON.stringify(email.data, null, 2));
 
-  emailMessage.on('data', function (buffer) {
-    message += buffer.toString();
-  });
-
-  emailMessage.on('error', function (err) {
-    callback(err);
-  });
-
-  emailMessage.on('end', function () {
-    logger.verbose(message);
-
-    callback(null, {
-      messageId: emailMessage._messageId
-    });
-  });
-  emailMessage.streamMessage();
+  callback(null, email);
 };
 
-module.exports = nodemailer.createTransport(ConsoleTransport, {
-  name: config.get('hostname')
-});
+module.exports = function (logger) {
+  return nodemailer.createTransport(new ConsoleTransport({
+    name: 'console',
+    logger: logger
+  }));
+};

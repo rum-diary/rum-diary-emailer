@@ -3,11 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const nodemailer = require('nodemailer');
-const config = require('../config');
+const transport = require('nodemailer-smtp-transport');
 
-module.exports = nodemailer.createTransport('SMTP', {
-  host: config.get('emailer.smtp.host'),
-  secureConnection: config.get('emailer.smtp.useSecureConnection'),
-  port: config.get('emailer.smtp.port')
-});
+module.exports = function (config) {
+
+  return nodemailer.createTransport(transport({
+    host: config.get('emailer.smtp.host'),
+    secure: config.get('emailer.smtp.useSecureConnection'),
+    port: config.get('emailer.smtp.port')
+  }));
+};
 
